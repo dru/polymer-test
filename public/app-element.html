@@ -7,20 +7,10 @@
 <link rel="import" href="meteor-collection.html">
 
 <dom-module id="app-element">
-
   <template>
     <style>
-    :host {
-      display: block;
-      padding: 20px;
-    }
-    
-    paper-fab {
-         position: absolute;
-         bottom: 1em;
-         right: 1em;
-    }
-       
+      :host { display: block; padding: 20px; }
+      paper-fab { position: absolute; bottom: 1em; right: 1em; }
     </style>
     
     <h2>Hello [[title]]</h2>
@@ -31,40 +21,25 @@
       <div># <span>{{index}}</span> <span>[[item.text]]</div>
     </template>
     
-    <paper-input id="new-entry" label="Add entry" on-keyup="addAction">
-    </paper-input>
-    
-    <paper-fab
-        icon="delete"
-        on-tap="deleteAction"
-        aria-label="Drop records">
-    </paper-fab>
-    
+    <paper-input id="new-entry" label="Add entry" on-keyup="addAction"></paper-input>
+    <paper-fab icon="delete" on-tap="deleteAction"></paper-fab>
   </template>
-
-<script>
-  Polymer({
-
-    is: 'app-element',
-    
-    properties: {
-      title: {
-        type: String,
-        value: 'app-element',
+  
+  <script>
+    Polymer({
+      is: 'app-element',
+      properties: {
+        title: { type: String },
       },
-    },
-      
-    addAction: function (e) {      
-        if (e.keyCode === 13) {
-          this.$.tasks.insert({text: this.$['new-entry'].value});
-          this.$['new-entry'].value = '';
-        }
-    },
-    
-    deleteAction: function () {
-      Meteor.call("clear")
-    }
-    
-  });
-</script>
+      addAction: function (e) {
+          if (e.keyCode === 13) {
+            this.$.tasks.insert({text: this.$['new-entry'].value});
+            this.$['new-entry'].value = '';
+          }
+      },
+      deleteAction: function () {
+        Meteor.call("clear")
+      }
+    });
+  </script>
 </dom-module>
