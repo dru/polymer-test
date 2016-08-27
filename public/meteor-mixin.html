@@ -13,42 +13,42 @@ window.meteorMixin = {
     __mwcComputationsIds:{type:Array,value:[]},
     __mwcBin:{type:Array,value:[]}
   },
-  _mwcSetData(data){
+  _mwcSetData: function(data){
     this.set("mwcData",data);
   },
-  attached() {
+  attached: function() {
     this.__mwcFirstRun = true;
     this.autorun(this.tracker);
     this.autorun(mwcDataUpdate.bind(null,this));
   },
-  detached() {
-    _.each(this.__mwcComputations,(c)=>{
+  detached: function() {
+    _.each(this.__mwcComputations,function(c){
       c.stop();
     });
     this.__mwcComputations = [];
-    this.__mwcHandles.forEach((h)=>{
+    this.__mwcHandles.forEach(function(h){
       h.stop();
     });
-    this.__mwcBin.forEach((h)=>{
+    this.__mwcBin.forEach(function(h){
       h.stop();
     });
 
   },
-  _mwcPush(p,val) {
-    let prop = _.clone(this[p]);
+  _mwcPush: function(p,val){
+    var prop = _.clone(this[p]);
     prop.push(val);
     this.set(p,prop);
   },
-  guard(f) {
+  guard: function(f) {
     if (Meteor.isServer || !Tracker.currentComputation) {
       return f();
     }
 
-    let dep = new Tracker.Dependency()
+    var dep = new Tracker.Dependency()
     dep.depend();
 
-    let value, newValue;
-    Tracker.autorun(comp => {
+    var value, newValue;
+    Tracker.autorun(function(comp) {
       newValue = f();
       if (!comp.firstRun && !EJSON.equals(newValue, value)) {
         dep.changed();
@@ -59,21 +59,23 @@ window.meteorMixin = {
     return newValue;
 
   },
-  autorun(f){
-    const cb = (c)=> {
-      if(!_.find(this.__mwcComputationsIds,(_id)=>{
+  autorun: function(f){
+    that = this
+    
+    var cb = function(c) {
+      if(!_.find(that.__mwcComputationsIds,function(_id) {
         return _id == c._id;
       })){
-        this._mwcPush("__mwcComputationsIds",c._id);
-        this._mwcPush("__mwcComputations",c);
+        that._mwcPush("__mwcComputationsIds",c._id);
+        that._mwcPush("__mwcComputations",c);
       }
-      f.bind(this)(c);
+      f.bind(that)(c);
     }
     Tracker.autorun(cb.bind(this));
 
   },
-  _removeSubs(val){
-    const handles = _.reject(_.clone(this.__mwcHandles),(h)=>{
+  _removeSubs: function(val){
+    var handles = _.reject(_.clone(this.__mwcHandles), function(h){
       if(h.subscriptionId = val.subscriptionId){
         return true;
       }
@@ -82,38 +84,43 @@ window.meteorMixin = {
     this.set("__mwcHandles",handles);
 
   },
-  subscribe() {
-    const handle = Meteor.subscribe.apply(null,arguments);
+  subscribe: function(){
+    var handle = Meteor.subscribe.apply(null,arguments);
     this._mwcPush("__mwcHandles",handle);
     this._subsReady();
-    const afterSub = (c)=>{
+    
+    that = this
+    
+    var afterSub = function(c) {
       if (handle.ready()) {
-        this._removeSubs(handle);
-        this._subsReady();
+        that._removeSubs(handle);
+        that._subsReady();
         c.stop();
 
       }
     }
+    
     this.autorun(afterSub.bind(this));
 
     return handle;
   },
-  _subsReady(h) {
-    const isReady =  _.every(this.__mwcHandles, (sub)=> {
+  _subsReady: function(h) {
+    var isReady =  _.every(this.__mwcHandles, function(sub) {
       return sub && sub.ready();
     });
     this.set("subsReady",isReady);
     return isReady;
   },
 
-  getMeteorData(){
+  getMeteorData: function(){
   },
-  tracker(){
+  
+  tracker: function(){
 
   }
 };
-const mwcDataUpdate = (element)=> {
-  const data = element.getMeteorData();
+const mwcDataUpdate = function(element) {
+  var data = element.getMeteorData();
   //  if(element.getMeteorData()){
   //  console.log("Use tracker instead of getMeteorData");
   //  }
@@ -127,7 +134,7 @@ const mwcDataUpdate = (element)=> {
     return;
   }
 
-  Tracker.afterFlush(()=> {
+  Tracker.afterFlush(function() {
     element._mwcSetData(data);
   });
 }

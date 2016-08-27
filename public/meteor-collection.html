@@ -20,21 +20,21 @@
         },
       },
       
-      ready() {
+      ready: function() {
         if(!instances[this.name]) {
           instances[this.name] = new Mongo.Collection(this.name);
         }
       },
       
-      tracker() {
+      tracker: function() {
          this.data = instances[this.name].find({}).fetch();
       },
       
-      insert(data) {
+      insert: function(data) {
         instances[this.name].insert(data);
       },
       
-      drop(data) {
+      drop: function(data) {
         console.log("remove")
         instances[this.name].remove({});
       }
