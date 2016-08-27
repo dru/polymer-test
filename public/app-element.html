@@ -1,0 +1,44 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="meteor-collection.html">
+
+<dom-module id="app-element">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    
+    <h2>Hello [[prop1]]</h2>
+    
+    <meteor-collection name="tasks" data="{{list}}"></meteor-collection>
+
+    <template is="dom-repeat" items="{{list}}">
+          <div># <span>{{index}}</span> <span> [[item.text]]</div>
+    </template>
+    
+    <hr/>
+    
+    <meteor-collection name="tasks" data="{{list1}}"></meteor-collection>
+    
+    <template is="dom-repeat" items="{{list1}}">
+          <div># <span>{{index}}</span> <span> [[item.text]]</div>
+    </template>
+    
+    
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'app-element',
+      properties: {
+        prop1: {
+          type: String,
+          value: 'app-element',
+        },
+      }
+    
+    });
+  </script>
+</dom-module>

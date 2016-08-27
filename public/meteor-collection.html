@@ -1,0 +1,35 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="meteor-mixin.html">
+
+<dom-module id="meteor-collection">
+  <script>
+    
+    Polymer({
+      is: 'meteor-collection',
+      
+      behaviors:[meteorMixin],
+      
+      properties: {
+        name: {
+          type: String
+        },
+        data: {
+          type: Array,
+          value: [],
+          notify: true
+        },
+      },
+      
+      ready() {
+        if(!instances[this.name]) {
+          instances[this.name] = new Mongo.Collection(this.name);
+        }
+      },
+      
+      tracker() {
+         this.data = instances[this.name].find({}).fetch();
+      }
+
+    });
+  </script>
+</dom-module>

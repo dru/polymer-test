@@ -1,0 +1,7 @@
+{
+  "galaxy.meteor.com": {
+    "env": {
+      "MONGO_URL": "mongodb://**:**@ds033297.mlab.com:33297/everloupe"
+    }
+  }
+}
