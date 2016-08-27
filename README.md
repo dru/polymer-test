@@ -3,5 +3,6 @@
 ### How to start
 
 `bower install`
+
 `meteor`
 
