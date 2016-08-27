@@ -28,7 +28,17 @@
       
       tracker() {
          this.data = instances[this.name].find({}).fetch();
+      },
+      
+      insert(data) {
+        instances[this.name].insert(data);
+      },
+      
+      drop(data) {
+        console.log("remove")
+        instances[this.name].remove({});
       }
+      
 
     });
   </script>

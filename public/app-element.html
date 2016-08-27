@@ -1,44 +1,71 @@
 <link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+12	<link rel="import" href="/bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="meteor-collection.html">
+<link rel="import" href="td-input.html">
 
 <dom-module id="app-element">
+
   <template>
     <style>
-      :host {
-        display: block;
-      }
+    :host {
+      display: block;
+      padding: 20px;
+    }
+    
+    paper-fab {
+         position: absolute;
+         bottom: 1em;
+         right: 1em;
+    }
+       
     </style>
     
-    <h2>Hello [[prop1]]</h2>
+    <h2>Hello [[title]]</h2>
     
-    <meteor-collection name="tasks" data="{{list}}"></meteor-collection>
+    <meteor-collection id="tasks" name="tasks" data="{{list}}"></meteor-collection>
 
     <template is="dom-repeat" items="{{list}}">
-          <div># <span>{{index}}</span> <span> [[item.text]]</div>
+      <div># <span>{{index}}</span> <span>[[item.text]]</div>
     </template>
     
-    <hr/>
+    <paper-input id="new-entry" label="Add entry" on-keyup="addAction">
+    </paper-input>
     
-    <meteor-collection name="tasks" data="{{list1}}"></meteor-collection>
-    
-    <template is="dom-repeat" items="{{list1}}">
-          <div># <span>{{index}}</span> <span> [[item.text]]</div>
-    </template>
-    
+    <paper-fab
+        icon="delete"
+        on-tap="deleteAction"
+        aria-label="Drop records">
+    </paper-fab>
     
   </template>
 
-  <script>
-    Polymer({
+<script>
+  Polymer({
 
-      is: 'app-element',
-      properties: {
-        prop1: {
-          type: String,
-          value: 'app-element',
-        },
-      }
+    is: 'app-element',
     
-    });
-  </script>
+    properties: {
+      title: {
+        type: String,
+        value: 'app-element',
+      },
+    },
+      
+    addAction: function (e) {      
+        if (e.keyCode === 13) {
+          this.$.tasks.insert({text: this.$['new-entry'].value});
+          this.$['new-entry'].value = '';
+        }
+    },
+    
+    deleteAction: function () {
+      Meteor.call("clear")
+    }
+    
+  });
+</script>
 </dom-module>
