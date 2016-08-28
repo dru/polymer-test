@@ -34,9 +34,14 @@
         instances[this.name].insert(data);
       },
       
-      drop: function(data) {
-        console.log("remove")
-        instances[this.name].remove({});
+      remove: function(id) {
+        instances[this.name].remove({_id:id});
+      },
+      
+      update: function(data) {
+        var id = data._id;
+        delete data._id;
+        instances[this.name].update(id, {$set: data});
       }
       
 

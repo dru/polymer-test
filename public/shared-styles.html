@@ -1,0 +1,40 @@
+<dom-module id="shared-styles">
+<template>
+  <style>
+  paper-fab { position: absolute; bottom: 1em; right: 1em; }
+  paper-input {
+    display: block;
+    width: 65%;
+    margin: auto;
+    --paper-input-container: {
+      padding-bottom: 0;
+    };
+  /* These styles are not DRY :( */
+    --paper-input-container-label: {
+      font-size: 25px;
+      font-family: 'Roboto Slab', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+      font-weight: normal;
+      color: #9E9E9E;
+    };
+    --paper-input-container-input: {
+      font-size: 25px;
+      font-family: 'Roboto Slab', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    };
+    --paper-input-container-underline: {
+      top: 7px;
+      background: #9E9E9E;
+    };
+    --paper-input-container-underline-focus: {
+      top: 7px;
+    };
+  }
+  
+  paper-card {
+    display: block;
+    margin: auto;
+    width: 400px;
+  }
+  
+  </style>
+  </template>
+</dom-module>

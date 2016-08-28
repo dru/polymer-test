@@ -1,0 +1,190 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="/bower_components/paper-material/paper-material.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/bower_components/neon-animation/neon-animation.html">
+
+
+<dom-module id="todo-item">
+
+  <template>
+
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+        min-height: 50px;
+      }
+
+      .row {
+        position: relative;
+        padding: 8px 16px 8px 22px;
+      }
+
+      paper-checkbox {
+        /* Checkbox has 8px of extra space on top so have to tweak it to center */
+        margin-top: -4px;
+        margin-right: 20px;
+      }
+
+      paper-checkbox[checked] + .label {
+        color: #9E9E9E;
+        text-decoration: line-through;
+      }
+
+      paper-input {
+        margin-top: -4px;
+        --paper-input-container-input: {
+          font-size: 20px;
+          text-overflow: ellipsis;
+        };
+        --paper-input-container-underline: {
+          background: transparent;
+        };
+      }
+
+      .btn-cancel {
+        opacity: 0;
+        transition: opacity 0.28s;
+        font-size: 15px;
+      }
+
+      :host:hover .btn-cancel,
+      :host([active]) .btn-cancel {
+        opacity: 1;
+      }
+    </style>
+
+    <paper-material elevation="[[_computeElevation(active)]]"
+                    class="row layout horizontal center">
+
+      <!-- Note the use of $= for aria-labelledby. This is because there's
+      no corresponding js property so we need to write a literal attribute
+      value, which is what $= does. -->
+      <paper-checkbox id="[[_computeLabelId(todo._id)]]"
+                      checked="{{todo.isComplete}}"
+                      on-change="_onCheck"
+                      aria-labelledby$="[[_computeLabelId(todo._id)]]"></paper-checkbox>
+
+      <paper-input id="[[_computeLabelId(todo._id)]]"
+                   class="flex"
+                   value="{{todo.label}}"
+                   no-label-float
+                   on-keypress="_checkConfirmation"></paper-input>
+
+      <paper-icon-button icon="delete"
+                         class="btn-cancel"
+                         aria-label="Delete Todo"
+                         tabindex="0"
+                         on-tap="_onDelete">
+      </paper-icon-button>
+
+    </paper-material>
+
+  </template>
+  <script>
+    Polymer({
+
+      is: 'todo-item',
+      
+      behaviors: [
+        Polymer.NeonSharedElementAnimatableBehavior,
+        Polymer.NeonAnimationRunnerBehavior
+      ],
+
+      properties: {
+
+        todo: Object,
+        
+        active: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+        
+        animationConfig: {
+          type: Object,
+          value: function() {
+            return {
+              'entry': {
+                name: 'fade-in-animation',
+                node: this,
+                
+              },
+              'exit': {
+                name: 'slide-right-animation',
+                node: this
+              }
+            }
+          }
+        }
+      },
+
+      attached: function() {
+        // Delegate focus events with useCapture to figure out if one of our
+        // child elements is being focused or if we're about to blur
+        // All of this fanciness is for the sake of the raised paper effect
+        this.playAnimation('entry');
+        this.addEventListener('focus', this._activate.bind(this), true);
+        this.addEventListener('blur', this._deactivate.bind(this), true);
+        this.addEventListener('mouseenter', this._activate.bind(this));
+        this.addEventListener('mouseleave', this._deactivate.bind(this));
+      },
+
+      detached: function() {
+        this.playAnimation('exit');
+        this.removeEventListener('focus', this._activate.bind(this), true);
+        this.removeEventListener('blur', this._deactivate.bind(this), true);
+        this.removeEventListener('mouseenter', this._activate.bind(this));
+        this.removeEventListener('mouseleave', this._deactivate.bind(this));
+      },
+
+      _activate: function() {
+        this.active = true;
+      },
+
+      _deactivate: function() {
+        this.active = false;
+      },
+
+      _computeElevation: function(active) {
+        return active ? 2 : 0;
+      },
+
+      _computeLabelId: function(uid) {
+        return 'todoItemLabel-' + uid;
+      },
+
+      // If enter was pressed, unfocus the text input
+      _checkConfirmation: function(e) {
+        if (e.keyCode === 13) {
+          e.preventDefault();
+          e.target.blur();
+          this.fire('update-todo', {todo: this.todo});
+          
+        }
+      },
+      _onCheck: function(){
+        console.log("sda sd")
+        this.fire('update-todo', {todo: this.todo});        
+      },
+      _onDelete: function() {
+        this.fire('delete-todo', {todo: this.todo});
+      }
+
+    });
+  </script>
+</dom-module>
